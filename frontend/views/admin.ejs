@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOTIS | Admin — Gestión de Artículos</title>
+    <link rel="stylesheet" href="/css/root.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <!-- ── Toolbar ─────────────────────────────────────────── -->
+    <div class="admin-toolbar">
+        <div class="admin-toolbar-inner">
+            <div class="admin-title-group">
+                <span class="admin-badge">🛠️ Panel de Administración</span>
+                <h2 class="admin-heading">Gestión de Artículos</h2>
+                <p class="admin-subheading"><%= items.length %> artículos en el catálogo</p>
+            </div>
+            <div class="admin-toolbar-actions">
+                <button id="toggle-create-btn" class="btn-create-toggle">
+                    ➕ Nuevo Artículo
+                </button>
+                <a href="/" class="admin-back-btn">← Volver al catálogo</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Create New Item Panel ───────────────────────────── -->
+    <div id="create-panel" class="create-panel" aria-hidden="true">
+        <div class="create-panel-inner">
+            <h3 class="create-panel-title">➕ Agregar Nuevo Artículo</h3>
+
+            <form
+                id="create-form"
+                class="create-form"
+                method="POST"
+                action="/api/items"
+                enctype="multipart/form-data"
+            >
+                <!-- Row 1: Nombre + Descripción -->
+                <div class="create-row">
+                    <div class="create-field">
+                        <label for="c-nombre" class="create-label">Nombre</label>
+                        <input id="c-nombre" name="nombre" type="text" class="create-input" placeholder="Ej. Sudadera Vellon Spyder" required>
+                    </div>
+                    <div class="create-field create-field--wide">
+                        <label for="c-descripcion" class="create-label">Descripción</label>
+                        <input id="c-descripcion" name="descripcion" type="text" class="create-input" placeholder="Talla, color, precio…" required>
+                    </div>
+                </div>
+
+                <!-- Row 2: Categoría + Género -->
+                <div class="create-row">
+                    <div class="create-field">
+                        <label for="c-categoria" class="create-label">Categoría</label>
+                        <select id="c-categoria" name="categoria" class="create-input create-select">
+                            <option value="ropa">👕 Ropa</option>
+                            <option value="Tenis">👟 Tenis</option>
+                            <option value="accesorios">🕶️ Accesorios</option>
+                            <option value="hogar">🏠 Hogar</option>
+                        </select>
+                    </div>
+                    <div class="create-field">
+                        <label for="c-genero" class="create-label">Género</label>
+                        <select id="c-genero" name="genero" class="create-input create-select">
+                            <option value="femenino">👩 Mujer</option>
+                            <option value="masculino">👨 Hombre</option>
+                            <option value="unisex">♾️ Unisex</option>
+                            <option value="nino">🧒 Niño</option>
+                            <option value="nina">👧 Niña</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3: Image inputs + live preview -->
+                <div class="create-row create-row--image">
+
+                    <!-- Option A: URL -->
+                    <div class="create-field create-img-option" id="c-opt-url">
+                        <label class="create-label">
+                            <span class="img-badge img-badge--a">A</span>
+                            URL de imagen
+                        </label>
+                        <input
+                            id="c-imagen-url"
+                            name="imagenUrl"
+                            type="text"
+                            class="create-input"
+                            placeholder="https://res.cloudinary.com/…"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <div class="create-img-divider"><span>o</span></div>
+
+                    <!-- Option B: File upload -->
+                    <div class="create-field create-img-option" id="c-opt-file">
+                        <label class="create-label">
+                            <span class="img-badge img-badge--b">B</span>
+                            Subir archivo → Cloudinary
+                        </label>
+                        <label class="create-drop-zone" for="c-imagen-file" id="c-drop-zone">
+                            <span>☁️</span>
+                            <span id="c-drop-text">Arrastra o haz clic</span>
+                            <input id="c-imagen-file" name="imagenFile" type="file" accept="image/*" style="display:none">
+                        </label>
+                    </div>
+
+                    <!-- Live preview -->
+                    <div class="create-preview-wrap">
+                        <p class="create-label">Preview</p>
+                        <img id="c-preview-img" class="create-preview-img" src="/images/placeholder.svg" alt="preview">
+                    </div>
+                </div>
+
+                <!-- Submit row -->
+                <div class="create-submit-row">
+                    <button type="button" id="cancel-create-btn" class="btn-create-cancel">Cancelar</button>
+                    <button type="submit" id="c-submit-btn" class="btn-create-save">💾 Guardar Artículo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Item Catalog Grid ────────────────────────────────── -->
+    <div class="catalogo" id="catalogo-admin">
+        <% items.forEach(function(item) { %>
+            <div class="producto">
+                <div class="producto-img-wrapper">
+                    <img
+                        src="<%= (item && item.imagen) ? item.imagen : '/images/placeholder.svg' %>"
+                        alt="<%= item.nombre %>"
+                        loading="lazy"
+                    >
+                    <%
+                        let generoClase = '';
+                        let generoLabel = '';
+                        if (item.genero === 'masculino')     { generoClase = 'masculino'; generoLabel = '👨 Hombre'; }
+                        else if (item.genero === 'femenino') { generoClase = 'femenino';  generoLabel = '👩 Mujer';  }
+                        else if (item.genero === 'unisex')   { generoClase = 'unisex';    generoLabel = '♾️ Unisex'; }
+                        else if (item.genero === 'nino')     { generoClase = 'nino';      generoLabel = '🧒 Niño';   }
+                        else if (item.genero === 'nina')     { generoClase = 'nina';      generoLabel = '👧 Niña';   }
+                        else                                 { generoClase = 'unisex';    generoLabel = '♾️ Unisex'; }
+                    %>
+                    <div class="gender-badge <%= generoClase %>"><%= generoLabel %></div>
+                </div>
+
+                <div class="info">
+                    <h3><%= item.nombre %></h3>
+                    <p class="descripcion"><%= item.descripcion %></p>
+
+                    <%
+                        let catEmoji = '';
+                        if (item.categoria === 'ropa')            catEmoji = '👕';
+                        else if (item.categoria === 'accesorios') catEmoji = '🕶️';
+                        else if (item.categoria === 'Tenis' || item.categoria === 'tenis') catEmoji = '👟';
+                        else if (item.categoria === 'hogar')      catEmoji = '🏠';
+                    %>
+                    <span class="categoria-tag">
+                        <%= catEmoji %> <%= item.categoria.charAt(0).toUpperCase() + item.categoria.slice(1) %>
+                    </span>
+
+                    <div class="admin-btn-group">
+                        <button class="admin-btn admin-btn--update" data-id="<%= item._id %>">
+                            ✏️ Update
+                        </button>
+                        <button class="admin-btn admin-btn--delete" data-id="<%= item._id %>">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+
+    <script src="/js/image-picker.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

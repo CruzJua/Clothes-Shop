@@ -1,0 +1,22 @@
+# ── Dependencies ─────────────────────────────────────────────
+node_modules/
+
+# ── Environment / Secrets ─────────────────────────────────────
+# NEVER commit your real credentials
+.env
+
+# ── OS / Editor noise ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+*.suo
+*.user
+
+# ── Logs ──────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ── Build output (if ever added) ──────────────────────────────
+dist/
+build/

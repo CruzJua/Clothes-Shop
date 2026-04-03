@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>TOTIS | Login Admin</title>
+    <link rel="stylesheet" href="/css/root.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <main class="login-container">
+        <h2 class="login-title">🔐 Panel de Administración</h2>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form class="login-form" action="/login" method="POST">
+            <input type="text" name="username" placeholder="Usuario" required autofocus>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

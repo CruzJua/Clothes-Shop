@@ -1,0 +1,11 @@
+<footer>
+    <p> 💬 Consulta por WhatsApp — Todos los productos sujetos a disponibilidad</p>
+    <p>Copyright Totis ©2026 
+        <% if (locals.isAdmin) { %>
+            · <a href="/admin" style="text-decoration:none; color:inherit;">⚙️ Admin</a>
+            · <a href="/logout" style="text-decoration:none; color:inherit;">👋 Salir</a>
+        <% } else { %>
+            · <a href="/login" style="text-decoration:none; color:inherit; opacity:0.3;">⚙️</a>
+        <% } %>
+    </p>
+</footer>

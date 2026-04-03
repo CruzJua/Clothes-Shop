@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOTIS | Editar — <%= item.nombre %></title>
+    <link rel="stylesheet" href="/css/root.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/edit-item.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <div class="admin-toolbar">
+        <div class="admin-toolbar-inner">
+            <div class="admin-title-group">
+                <span class="admin-badge">✏️ Editar Artículo</span>
+                <h2 class="admin-heading">Actualizar información</h2>
+                <p class="admin-subheading">ID: <code><%= item._id %></code></p>
+            </div>
+            <a href="/admin" class="admin-back-btn">← Volver al panel</a>
+        </div>
+    </div>
+
+    <div class="edit-layout">
+
+        <!-- ── Live Preview ─────────────────────────────── -->
+        <div class="edit-preview">
+            <p class="preview-label">Vista previa</p>
+            <div class="producto preview-card">
+                <div class="producto-img-wrapper">
+                    <img
+                        id="preview-img"
+                        src="<%= (item && item.imagen) ? item.imagen : '/images/placeholder.svg' %>"
+                        alt="Preview"
+                        class="loaded"
+                    >
+                    <div class="gender-badge preview-badge">👁️ Preview</div>
+                </div>
+                <div class="info">
+                    <h3 id="preview-nombre"><%= item.nombre %></h3>
+                    <p class="descripcion" id="preview-desc"><%= item.descripcion %></p>
+                    <span class="categoria-tag" id="preview-cat"><%= item.categoria %></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Edit Form ─────────────────────────────────── -->
+        <form
+            id="edit-form"
+            class="edit-form"
+            method="POST"
+            action="/api/items/<%= item._id %>"
+            enctype="multipart/form-data"
+        >
+            <!-- Flash message area -->
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="flash flash--success">✅ Artículo actualizado correctamente.</div>
+            <% } %>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="flash flash--error">❌ <%= error %></div>
+            <% } %>
+
+            <!-- Nombre -->
+            <div class="field-group">
+                <label for="nombre" class="field-label">Nombre del artículo</label>
+                <input
+                    id="nombre"
+                    name="nombre"
+                    type="text"
+                    class="field-input"
+                    value="<%= item.nombre %>"
+                    required
+                >
+            </div>
+
+            <!-- Descripción -->
+            <div class="field-group">
+                <label for="descripcion" class="field-label">Descripción</label>
+                <textarea
+                    id="descripcion"
+                    name="descripcion"
+                    class="field-input field-textarea"
+                    rows="4"
+                    required
+                ><%= item.descripcion %></textarea>
+            </div>
+
+            <!-- Categoría + Género (side by side) -->
+            <div class="field-row">
+                <div class="field-group">
+                    <label for="categoria" class="field-label">Categoría</label>
+                    <select id="categoria" name="categoria" class="field-input field-select">
+                        <% ['ropa','Tenis','tenis','accesorios','hogar'].forEach(c => { %>
+                            <option value="<%= c %>" <%= item.categoria === c ? 'selected' : '' %>><%= c %></option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label for="genero" class="field-label">Género</label>
+                    <select id="genero" name="genero" class="field-input field-select">
+                        <% [
+                            {val:'femenino',  label:'👩 Mujer'},
+                            {val:'masculino', label:'👨 Hombre'},
+                            {val:'unisex',    label:'♾️ Unisex'},
+                            {val:'nino',      label:'🧒 Niño'},
+                            {val:'nina',      label:'👧 Niña'},
+                        ].forEach(g => { %>
+                            <option value="<%= g.val %>" <%= item.genero === g.val ? 'selected' : '' %>><%= g.label %></option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Image section -->
+            <div class="image-section">
+                <p class="field-label">Imagen — elige <em>una</em> opción</p>
+
+                <!-- Option A: URL -->
+                <div class="image-option" id="opt-url">
+                    <div class="image-option-header">
+                        <span class="image-option-badge badge-url">A</span>
+                        <span class="image-option-title">URL directa</span>
+                    </div>
+                    <input
+                        id="imagen-url"
+                        name="imagenUrl"
+                        type="text"
+                        class="field-input"
+                        placeholder="https://res.cloudinary.com/…"
+                        value="<%= (item && item.imagen) ? item.imagen : '' %>"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="image-divider"><span>o</span></div>
+
+                <!-- Option B: File upload -->
+                <div class="image-option" id="opt-file">
+                    <div class="image-option-header">
+                        <span class="image-option-badge badge-file">B</span>
+                        <span class="image-option-title">Subir archivo local → Cloudinary</span>
+                    </div>
+                    <label class="file-drop-zone" for="imagen-file" id="drop-zone">
+                        <span class="drop-icon">☁️</span>
+                        <span class="drop-text" id="drop-text">Arrastra una imagen o haz clic para seleccionar</span>
+                        <input
+                            id="imagen-file"
+                            name="imagenFile"
+                            type="file"
+                            accept="image/*"
+                            class="file-input-hidden"
+                        >
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="submit-row">
+                <a href="/admin" class="btn-cancel">Cancelar</a>
+                <button type="submit" id="submit-btn" class="btn-save">
+                    💾 Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+    <script src="/js/image-picker.js"></script>
+    <script src="/js/edit-item.js"></script>
+</body>
+</html>

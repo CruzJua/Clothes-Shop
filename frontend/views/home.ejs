@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="TOTIS — Catálogo visual de ropa, tenis, accesorios y más. Filtra por género o categoría y consulta por WhatsApp.">
+    <title>TOTIS | Catálogo Visual - Hombre, Mujer &amp; Kids</title>
+    <link rel="stylesheet" href="/css/root.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <div class="filtros-section">
+        <div class="filtro-grupo">
+            <div class="filtro-titulo">👥 FILTRAR POR GÉNERO</div>
+            <div class="filtros" id="filtros-genero">
+                <button class="btn-genero active" data-genero="todos">🌍 Todos</button>
+                <button class="btn-genero" data-genero="masculino">👨 Hombre</button>
+                <button class="btn-genero" data-genero="femenino">👩 Mujer</button>
+                <button class="btn-genero" data-genero="unisex">♾️ Unisex</button>
+                <button class="btn-genero" data-genero="nino">🧒 Niño</button>
+                <button class="btn-genero" data-genero="nina">👧 Niña</button>
+            </div>
+        </div>
+
+        <div class="filtro-grupo">
+            <div class="filtro-titulo">📂 CATEGORÍAS</div>
+            <div class="filtros" id="filtros-categoria">
+                <button class="btn-filtro active" data-categoria="todos">✨ Todos</button>
+                <button class="btn-filtro" data-categoria="ropa">👕 Ropa</button>
+                <button class="btn-filtro" data-categoria="accesorios">🕶️ Accesorios</button>
+                <button class="btn-filtro" data-categoria="tenis">👟 Tenis</button>
+                <button class="btn-filtro" data-categoria="hogar">🏠 Hogar</button>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 12px;">
+            <span id="filtro-indicador" class="filtros-activos"></span>
+            <button id="btn-sync" class="btn-filtro" style="padding: 6px 12px; font-size: 0.8rem;" title="Forzar actualización de datos">
+                🔄 Sincronizar
+            </button>
+        </div>
+    </div>
+
+    <div class="catalogo" id="catalogo"></div>
+
+    <%- include("partials/footer.ejs") %>
+    <script src="/js/cache-manager.js" defer></script>
+    <script src="/js/root.js" defer></script>
+</body>
+</html>
