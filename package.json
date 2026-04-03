@@ -20,14 +20,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "install-all": "npm install && npm install --workspaces",
     "test": "jest",
     "dev": "nodemon app.js"
   },
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "keywords": [],
   "author": "Juan Cruz",
   "license": "ISC",
