@@ -5,6 +5,7 @@ require("dotenv").config({ path: ".env" });
 const session = require("express-session");
 const { MongoStore } = require("connect-mongo");
 
+app.set('trust proxy', 1);
 
 app.use(session({
     secret: process.env.SESSION_SECRET,

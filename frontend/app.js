@@ -73,11 +73,18 @@ app.post("/login", (req, res) => {
         const adminUser = process.env.ADMIN_USER || "";
         const adminPass = process.env.ADMIN_PASS || "";
 
-        // Timing-safe comparison prevents brute-force timing attacks
+        const userBuf = Buffer.from(username);
+        const adminUserBuf = Buffer.from(adminUser);
+        const passBuf = Buffer.from(password);
+        const adminPassBuf = Buffer.from(adminPass);
+
         const userMatch = adminUser.length > 0 &&
-            crypto.timingSafeEqual(Buffer.from(username), Buffer.from(adminUser));
+            userBuf.length === adminUserBuf.length &&
+            crypto.timingSafeEqual(userBuf, adminUserBuf);
+
         const passMatch = adminPass.length > 0 &&
-            crypto.timingSafeEqual(Buffer.from(password), Buffer.from(adminPass));
+            passBuf.length === adminPassBuf.length &&
+            crypto.timingSafeEqual(passBuf, adminPassBuf);
 
         if (!userMatch || !passMatch) {
             return res.render("login", { error: "Credenciales inválidas." });
