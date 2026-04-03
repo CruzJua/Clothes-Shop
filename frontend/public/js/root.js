@@ -178,6 +178,20 @@ if (btnSync) {
     });
 }
 
+// Botón "Scroll to Bottom"
+const scrollBtn = document.createElement('button');
+scrollBtn.id = 'scroll-to-bottom';
+scrollBtn.innerHTML = '⬇️';
+scrollBtn.title = 'Ir al final';
+document.body.appendChild(scrollBtn);
+
+scrollBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth' /* Scroll elegante a la parte inferior */
+    });
+});
+
 // Init Function
 async function initStore() {
     catalogoDiv.innerHTML = '<div class="no-results" style="padding: 40px;">Cargando catálogo... ⏳</div>';
